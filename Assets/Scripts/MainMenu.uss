@@ -7,9 +7,12 @@
 }
 
 .menu-panel {
-    width: 420px;
-    max-width: 90%;
-    padding: 42px 38px 30px 38px;
+    width: 850px;
+    max-width: 94%;
+    min-height: 440px;
+    flex-direction: row;
+    align-items: center;
+    padding: 30px 42px;
     background-color: #1b1924;
     border-left-width: 4px;
     border-left-color: #c5ff4a;
@@ -19,27 +22,21 @@
     border-bottom-right-radius: 18px;
 }
 
-.menu-eyebrow {
-    color: #c5ff4a;
-    font-size: 12px;
-    -unity-font-style: bold;
-    letter-spacing: 3px;
-    margin-bottom: 10px;
+.menu-logo {
+    width: 350px;
+    height: 350px;
+    flex-shrink: 0;
 }
 
-.menu-title {
-    color: #f5f1ff;
-    font-size: 64px;
-    -unity-font-style: bold;
-    line-height: 0.9;
-    letter-spacing: 2px;
+.menu-content {
+    flex-grow: 1;
+    margin-left: 30px;
 }
 
 .menu-subtitle {
     color: #aaa5b7;
-    font-size: 15px;
-    margin-top: 12px;
-    margin-bottom: 28px;
+    font-size: 16px;
+    margin-bottom: 24px;
 }
 
 .menu-buttons {

@@ -11,6 +11,7 @@ public class MainMenuUI : MonoBehaviour
 {
     [SerializeField] private string gameSceneName = "SampleScene";
     [SerializeField] private StyleSheet menuStyle;
+    [SerializeField] private Texture2D gameLogo;
 
     private UIDocument document;
 
@@ -33,21 +34,28 @@ public class MainMenuUI : MonoBehaviour
         panel.AddToClassList("menu-panel");
         root.Add(panel);
 
-        Label eyebrow = new Label("THE ROAD IS YOURS");
-        eyebrow.AddToClassList("menu-eyebrow");
-        panel.Add(eyebrow);
+        if (gameLogo != null)
+        {
+            Image logo = new Image
+            {
+                image = gameLogo,
+                scaleMode = ScaleMode.ScaleToFit
+            };
+            logo.AddToClassList("menu-logo");
+            panel.Add(logo);
+        }
 
-        Label title = new Label("TOY\nDRIVE");
-        title.AddToClassList("menu-title");
-        panel.Add(title);
+        VisualElement content = new VisualElement();
+        content.AddToClassList("menu-content");
+        panel.Add(content);
 
         Label subtitle = new Label("Tiny wheels. Big adventures.");
         subtitle.AddToClassList("menu-subtitle");
-        panel.Add(subtitle);
+        content.Add(subtitle);
 
         VisualElement buttons = new VisualElement();
         buttons.AddToClassList("menu-buttons");
-        panel.Add(buttons);
+        content.Add(buttons);
 
         Button startButton = CreateButton("START GAME", "menu-button", StartGame);
         startButton.AddToClassList("menu-button-primary");
@@ -57,7 +65,7 @@ public class MainMenuUI : MonoBehaviour
 
         Label footer = new Label("W A S D   TO DRIVE     •     MOUSE TO LOOK");
         footer.AddToClassList("menu-footer");
-        panel.Add(footer);
+        content.Add(footer);
     }
 
     private static Button CreateButton(string text, string className, System.Action onClick)
