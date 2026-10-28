@@ -14,6 +14,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] private Texture2D gameLogo;
 
     private UIDocument document;
+    private int gameSceneBuildIndex = -1;
 
     private void OnEnable()
     {
@@ -52,6 +53,12 @@ public class MainMenuUI : MonoBehaviour
         Label subtitle = new Label("Tiny wheels. Big adventures.");
         subtitle.AddToClassList("menu-subtitle");
         content.Add(subtitle);
+
+        Label bestTime = new Label(GameScore.HasBestTime
+            ? $"BEST ELAPSED TIME   {GameScore.FormatTime(GameScore.BestTime)}"
+            : "BEST ELAPSED TIME   --:--");
+        bestTime.AddToClassList("menu-best-time");
+        content.Add(bestTime);
 
         VisualElement buttons = new VisualElement();
         buttons.AddToClassList("menu-buttons");
@@ -104,7 +111,56 @@ public class MainMenuUI : MonoBehaviour
             return;
         }
 
-        SceneManager.LoadScene(gameSceneName);
+        gameSceneBuildIndex = sceneIndex;
+        BuildStoryScreen();
+    }
+
+    private void BuildStoryScreen()
+    {
+        VisualElement root = document.rootVisualElement;
+        root.Clear();
+
+        VisualElement panel = new VisualElement();
+        panel.AddToClassList("story-panel");
+        root.Add(panel);
+
+        Label eyebrow = new Label("A LITTLE STORY");
+        eyebrow.AddToClassList("story-eyebrow");
+        panel.Add(eyebrow);
+
+        Label title = new Label("THE GREAT ESCAPE");
+        title.AddToClassList("story-title");
+        panel.Add(title);
+
+        Label story = new Label(
+            "Once upon a time, a little toy car sat forgotten beneath a kitchen cabinet.\n\n" +
+            "Its owner was nowhere to be seen, its battery was running low, and home seemed a million miles away.\n\n" +
+            "But this wasn't an ordinary house.\n\n" +
+            "Spoons became bridges. Sponges became mountains. Tables became dangerous highways, and even a simple trip across the floor could turn into a wild adventure.\n\n" +
+            "Determined to find its way back, the little car set off through a world built for giants.\n\n" +
+            "But something strange was happening in this house...\n\n" +
+            "And soon, the little car would discover that escaping alone might not be enough."
+        );
+        story.AddToClassList("story-copy");
+        panel.Add(story);
+
+        Button continueButton = new Button(ContinueToGame) { text = "TAP TO CONTINUE" };
+        continueButton.AddToClassList("menu-button");
+        continueButton.AddToClassList("menu-button-primary");
+        continueButton.AddToClassList("story-continue");
+        panel.Add(continueButton);
+        continueButton.Focus();
+    }
+
+    private void ContinueToGame()
+    {
+        if (gameSceneBuildIndex < 0)
+        {
+            Debug.LogError("Choose a gameplay scene from the main menu before continuing.", this);
+            return;
+        }
+
+        SceneManager.LoadScene(gameSceneBuildIndex);
     }
 
     private void ShowOptions()

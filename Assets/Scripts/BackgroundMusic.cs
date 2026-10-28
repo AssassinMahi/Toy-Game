@@ -3,6 +3,8 @@ using UnityEngine;
 /// <summary>Plays a looping background track with an Inspector volume control.</summary>
 public class BackgroundMusic : MonoBehaviour
 {
+    private static BackgroundMusic activeMusic;
+
     [SerializeField] private AudioClip musicClip;
     [SerializeField, Range(0f, 1f)] private float volume = 0.35f;
 
@@ -10,6 +12,15 @@ public class BackgroundMusic : MonoBehaviour
 
     private void Awake()
     {
+        if (activeMusic != null && activeMusic != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        activeMusic = this;
+        DontDestroyOnLoad(gameObject);
+
         musicSource = GetComponent<AudioSource>();
         if (musicSource == null)
             musicSource = gameObject.AddComponent<AudioSource>();
@@ -33,5 +44,11 @@ public class BackgroundMusic : MonoBehaviour
 
         if (musicSource != null)
             musicSource.volume = volume;
+    }
+
+    private void OnDestroy()
+    {
+        if (activeMusic == this)
+            activeMusic = null;
     }
 }

@@ -42,6 +42,10 @@ public class CarController : MonoBehaviour
     [SerializeField] private float maxSteeringAngle = 30f;
     [Tooltip("Reverse this if A/D steers the front wheels the wrong way.")]
     [SerializeField] private bool invertWheelSteering;
+    [Tooltip("How quickly the car rotates upright while holding A or S after rolling over.")]
+    [SerializeField] private float recoverySpeed = 120f;
+    [Tooltip("Begin rollover recovery when the car's up direction has less alignment with world up than this value.")]
+    [SerializeField, Range(0f, 1f)] private float recoveryTiltThreshold = 0.65f;
 
     [Header("Motor Sound")]
     [SerializeField] private AudioClip motorSound;
@@ -112,7 +116,8 @@ public class CarController : MonoBehaviour
             return;
 
         bool movementKeyHeld = Mathf.Abs(moveInput) > 0.01f;
-        bool shouldPlay = movementKeyHeld && Time.timeScale > 0f;
+        bool isUpright = Vector3.Dot(transform.up, Vector3.up) >= recoveryTiltThreshold;
+        bool shouldPlay = movementKeyHeld && Time.timeScale > 0f && isUpright;
 
         if (shouldPlay && !motorAudioSource.isPlaying)
             motorAudioSource.Play();
@@ -131,6 +136,21 @@ public class CarController : MonoBehaviour
             GetAxisVector(leftAxis)
         );
 
+        // Turn around the car's local up axis.
+        // Calculate up from the selected forward and left directions.
+        Vector3 up = Vector3.Cross(forward, left).normalized;
+
+        bool isTippedOver = Vector3.Dot(transform.up, Vector3.up) < recoveryTiltThreshold;
+        if (isTippedOver)
+        {
+            // If the car is on its side or roof, hold A or S to right it.
+            // Normal drive and steering are suspended until it is upright.
+            if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S))
+                RecoverUpright(forward);
+
+            return;
+        }
+
         // Accelerate in the selected forward/backward direction.
         if (rb.linearVelocity.magnitude < maxSpeed)
         {
@@ -139,10 +159,6 @@ public class CarController : MonoBehaviour
                 ForceMode.Acceleration
             );
         }
-
-        // Turn around the car's local up axis.
-        // Calculate up from the selected forward and left directions.
-        Vector3 up = Vector3.Cross(forward, left).normalized;
 
         if (Mathf.Abs(moveInput) > 0.1f && up.sqrMagnitude > 0.9f)
         {
@@ -172,16 +188,44 @@ public class CarController : MonoBehaviour
         AnimateWheels(forward, up);
     }
 
+    private void RecoverUpright(Vector3 forward)
+    {
+        Vector3 flatForward = Vector3.ProjectOnPlane(forward, Vector3.up);
+        if (flatForward.sqrMagnitude < 0.001f)
+            flatForward = Vector3.ProjectOnPlane(transform.right, Vector3.up);
+        if (flatForward.sqrMagnitude < 0.001f)
+            flatForward = Vector3.forward;
+
+        Quaternion uprightRotation = Quaternion.LookRotation(flatForward.normalized, Vector3.up);
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+        rb.MoveRotation(Quaternion.RotateTowards(
+            rb.rotation,
+            uprightRotation,
+            recoverySpeed * Time.fixedDeltaTime
+        ));
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         if (HasGameOverTag(collision.collider.transform))
             pauseMenu?.TriggerGameOver();
+
+        NotifyCheckpoint(collision.collider.transform);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (HasGameOverTag(other.transform))
             pauseMenu?.TriggerGameOver();
+
+        NotifyCheckpoint(other.transform);
+    }
+
+    private static void NotifyCheckpoint(Transform touchedTransform)
+    {
+        CheckpointSequence sequence = touchedTransform.GetComponentInParent<CheckpointSequence>();
+        sequence?.TryReachCheckpoint(touchedTransform);
     }
 
     private static bool HasGameOverTag(Transform hitTransform)

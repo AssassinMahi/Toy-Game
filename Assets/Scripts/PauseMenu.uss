@@ -73,6 +73,42 @@
     margin-bottom: 4px;
 }
 
+.checkpoint-counter {
+    position: absolute;
+    top: 22px;
+    right: 24px;
+    padding: 12px 18px;
+    background-color: rgba(27, 25, 36, 0.92);
+    color: #c5ff4a;
+    border-left-width: 3px;
+    border-left-color: #c5ff4a;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-size: 14px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
+.game-timer {
+    position: absolute;
+    top: 22px;
+    left: 24px;
+    padding: 12px 18px;
+    background-color: rgba(27, 25, 36, 0.92);
+    color: #f5f1ff;
+    border-left-width: 3px;
+    border-left-color: #c5ff4a;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    font-size: 14px;
+    -unity-font-style: bold;
+    letter-spacing: 1px;
+}
+
 .gameover-overlay {
     position: absolute;
     left: 0;
@@ -104,4 +140,59 @@
     letter-spacing: 3px;
     margin-bottom: 24px;
     -unity-text-align: middle-center;
+}
+
+.chapter-complete-overlay {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(12, 11, 18, 0.88);
+}
+
+.chapter-complete-panel {
+    width: 620px;
+    max-width: 90%;
+    padding: 42px;
+    background-color: #1b1924;
+    border-left-width: 4px;
+    border-left-color: #c5ff4a;
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+    align-items: center;
+}
+
+.chapter-complete-title {
+    color: #c5ff4a;
+    font-size: 30px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+    -unity-text-align: middle-center;
+}
+
+.chapter-complete-message {
+    color: #f5f1ff;
+    font-size: 18px;
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.chapter-best-time {
+    color: #c5ff4a;
+    font-size: 20px;
+    -unity-font-style: bold;
+    letter-spacing: 2px;
+    margin-top: 20px;
+    -unity-text-align: middle-center;
+}
+
+.chapter-complete-menu-button {
+    width: 100%;
+    margin-top: 28px;
 }
